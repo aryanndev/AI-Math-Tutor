@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Math Problem Solver</title>
+    <meta name="description" content="Solve math problems step-by-step using SymPy and AI.">
+    <!-- Use Inter and Outfit for a modern feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav class="top-bar">
+        <div class="logo">AI Math Solver</div>
+        <div class="nav-links">
+            <a href="#" id="home-link" class="active">Home</a>
+            <a href="#" id="about-link">About</a>
+        </div>
+    </nav>
+
+    <!-- Animated background orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <div class="main-wrapper">
+        <div class="glass-container">
+            <header class="header">
+                <h1>✨ AI Math Problem Solver</h1>
+                <p class="subtitle">Enter your math problem, and let SymPy compute the exact answer while Gemini explains it step-by-step!</p>
+            </header>
+            
+            <div class="input-section">
+                <div class="input-wrapper">
+                    <input type="text" id="problem-input" placeholder="e.g., 2*x + 3 = 7 or x^2 - 4 = 0" autocomplete="off">
+                    <div class="input-glow"></div>
+                </div>
+                <button id="solve-btn" class="btn-primary">
+                    <span>Solve</span>
+                    <div class="btn-glow"></div>
+                </button>
+            </div>
+            
+            <div id="loading" class="hidden">
+                <div class="premium-spinner">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-core"></div>
+                </div>
+                <p class="loading-text">Computing exact solution & generating AI explanation...</p>
+            </div>
+
+            <div id="result-section" class="hidden">
+                <div class="result-card solution-card" id="solution-container">
+                    <div class="card-header">
+                        <span class="icon">✓</span>
+                        <h3>Verified Answer (SymPy)</h3>
+                    </div>
+                    <div id="solution-output" class="card-content"></div>
+                </div>
+                
+                <div class="result-card explanation-card" id="explanation-container">
+                    <div class="card-header">
+                        <span class="icon">🧠</span>
+                        <h3>Step-by-Step AI Explanation</h3>
+                    </div>
+                    <div id="explanation-output" class="card-content"></div>
+                </div>
+            </div>
+
+            <div class="history-section">
+                <button id="toggle-history-btn" class="btn-secondary">View History</button>
+                <div id="history-container" class="hidden history-wrapper"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="modal hidden">
+        <div class="modal-content glass-container">
+            <button class="close-modal">&times;</button>
+            <h2>About AI Math Solver</h2>
+            <p>This tool combines the rigorous symbolic computation of <strong>SymPy</strong> to ensure mathematically correct answers, with the advanced reasoning capabilities of <strong>Google Gemini AI</strong> to explain those answers step-by-step.</p>
+            <p>It's designed to act as an expert tutor, giving you the final result and walking you through the thought process to get there.</p>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
