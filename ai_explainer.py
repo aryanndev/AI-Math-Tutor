@@ -1,61 +1,76 @@
 import requests
 import os
+from dotenv import load_dotenv
 
-def get_explanation(problem, solution):
-    # Using the API key provided in the request
-    api_key = "Your API KEY HERE"
-    
+load_dotenv()
+
+SYSTEM_PROMPT = """You are MathBot, a friendly and expert math tutor AI assistant. 
+You specialize ONLY in mathematics — algebra, calculus, geometry, statistics, number theory, linear algebra, and all other math topics.
+If a user asks about something unrelated to math, politely redirect them back to math topics.
+
+You operate in two modes:
+1. Solving Mode: For computational queries (e.g., "solve x^2+2x", "integrate sin(x)").
+   - Show clear, numbered step-by-step solutions
+   - Use LaTeX formatting for equations
+   - Explain each step carefully
+
+2. Explanation Mode: For conceptual or theory questions (e.g., "tell me about pythagorean theorem", "what is a derivative?").
+   - Give intuitive and educational explanations
+   - Use examples and analogies when helpful
+   - Avoid unnecessary symbolic computation
+   - Only use equations when relevant
+
+Keep your tone friendly, clear, and educational."""
+
+def get_chat_response(messages: list) -> str:
+    """
+    messages: list of {"role": "user"/"assistant", "text": "..."}
+    """
+    api_key = os.getenv("GEMINI_API_KEY")
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent"
     headers = {
         "Content-Type": "application/json",
         "X-goog-api-key": api_key
     }
-    
-    prompt = f"""
-You are a friendly and patient math tutor.
 
-Problem: {problem}
-Final Answer (already verified): {solution}
+    # Build the Gemini contents array with conversation history
+    contents = []
 
-Instructions:
+    # Inject system prompt as the first user turn (Gemini doesn't have a system role)
+    contents.append({
+        "role": "user",
+        "parts": [{"text": SYSTEM_PROMPT}]
+    })
+    contents.append({
+        "role": "model",
+        "parts": [{"text": "Understood! I'm MathBot, your friendly math tutor. Ask me anything math-related and I'll help you solve it step by step. 🧮"}]
+    })
 
-* Start with a short greeting (1–2 lines).
-* Explain the solution step by step in a detailed and easy-to-understand way.
-* Use numbered steps.
-* Each step should include what is being done and why it is done.
-* Use simple language as if teaching a beginner.
-* Do not repeat the full problem.
-* Use basic math notation (like x^2, /, *, etc.), not LaTeX.
-* Make sure all steps logically lead to the given final answer.
-* Use plain text only (no markdown, no bold, no special formatting).
-* Avoid unnecessary filler, but ensure the explanation is clear and complete.
-
-Format:
-Greeting line
-
-1. step with explanation (what + why)
-2. step with explanation (what + why)
-   ...
-
-Final Answer: {solution}
-"""
+    for msg in messages:
+        role = "user" if msg["role"] == "user" else "model"
+        contents.append({
+            "role": role,
+            "parts": [{"text": msg["text"]}]
+        })
 
     data = {
-        "contents": [
-            {
-                "parts": [
-                    {
-                        "text": prompt
-                    }
-                ]
-            }
-        ]
+        "contents": contents,
+        "generationConfig": {
+            "temperature": 0.7,
+            "maxOutputTokens": 2048,
+        }
     }
-    
+
     try:
         response = requests.post(url, headers=headers, json=data)
         response.raise_for_status()
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text']
     except Exception as e:
-        return f"Error generating explanation: {e}"
+        return f"Sorry, I encountered an error: {e}"
+
+
+# Legacy single-turn function kept for backwards compatibility
+def get_explanation(problem):
+    messages = [{"role": "user", "text": f"Solve and explain: {problem}"}]
+    return get_chat_response(messages)

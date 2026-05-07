@@ -16,7 +16,7 @@ The application provides you with a verified, exact answer and follows it up wit
 
 1. **Navigate to the project directory**:
    ```bash
-   cd Ai-Math-Tutor
+   cd ai_math_solver
    ```
 
 2. **Install the dependencies**:
